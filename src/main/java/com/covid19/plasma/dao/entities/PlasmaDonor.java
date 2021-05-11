@@ -1,20 +1,24 @@
 package com.covid19.plasma.dao.entities;
 
-import lombok.Data;
+import com.covid19.plasma.enums.Status;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Date;
 
-@Data
 @Entity
+@Getter
+@Setter
 @Table(name = "plasma_donor", indexes = {@Index(name = "idx_phone_number", columnList = "phone_number")})
-public class PlasmaDonor {
+public class PlasmaDonor<List> {
     String firstName;
     String lastName;
     String gender;
     @Column(name = "phone_number", nullable = false)
     String phoneNumber;
+    Date dob;
     Integer age;
     String email;
     String bloodGroup;
@@ -33,7 +37,10 @@ public class PlasmaDonor {
     @Column(name = "is_email_verified", columnDefinition = "boolean default false")
     Boolean isEmailVerified;
     @Column(name = "status")
-    String requestStatus;
+    @Enumerated(EnumType.STRING)
+    Status requestStatus;
+    @OneToMany(mappedBy = "plasmaDonor")
+    java.util.List<RequestorDonorMapperEntity> offerRequestors;
     @Id
     @GeneratedValue
     private Long id;

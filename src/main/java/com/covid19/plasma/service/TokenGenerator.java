@@ -5,6 +5,7 @@ import com.covid19.plasma.model.AuthenticationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Random;
 
@@ -12,12 +13,15 @@ import java.util.Random;
 public class TokenGenerator {
 
     @Autowired
-    UserManagementService userManagementService;
+    private UserManagementService userManagementService;
 
-    public String generateToken(AuthenticationRequest authenticationRequest) {
-        String phoneNumber = authenticationRequest.getPhoneNumber();
+    @Autowired
+    private OtpService otpService;
+
+    public String generateToken(AuthenticationRequest authenticationRequest) throws IOException {
         String token = getToken();
-        updateUserToken(phoneNumber, token);
+        otpService.sendSms(authenticationRequest.getPhoneNumber(), "Your OTP is " + token);
+        updateUserToken(authenticationRequest.getPhoneNumber(), token);
         return token;
     }
 

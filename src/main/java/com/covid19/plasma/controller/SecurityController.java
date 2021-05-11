@@ -5,29 +5,38 @@ import com.covid19.plasma.exception.PlasmaException;
 import com.covid19.plasma.exception.TokenException;
 import com.covid19.plasma.model.AuthenticationRequest;
 import com.covid19.plasma.model.AuthenticationResponse;
+import com.covid19.plasma.security.AuthenticationSuccessHandler;
+import com.covid19.plasma.security.facade.IAuthenticationFacade;
 import com.covid19.plasma.service.TokenGenerator;
 import com.covid19.plasma.service.UserManagementService;
 import com.covid19.plasma.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 @RestController
 public class SecurityController {
 
     @Autowired
+    AuthenticationSuccessHandler authenticationSuccessHandler;
+    
+    @Autowired
     private AuthenticationManager authenticationManager;
-
+    
     @Autowired
     private UserManagementService userManagementService;
-
+    
     @Autowired
     private TokenGenerator tokenGenerator;
 
@@ -50,7 +59,7 @@ public class SecurityController {
     }*/
 
     @RequestMapping(value = "/generate/otp", method = RequestMethod.POST)
-    public String generateOTP(@RequestBody AuthenticationRequest authenticationRequest) throws PlasmaException {
+    public String generateOTP(@RequestBody AuthenticationRequest authenticationRequest) throws PlasmaException, IOException {
         final boolean isUser = userManagementService.isPhoneNumberExists(authenticationRequest.getPhoneNumber());
         if (!isUser) {
             throw new PhoneNumberNotFoundException("phone number not found");
@@ -62,7 +71,13 @@ public class SecurityController {
     @RequestMapping(value = "/validate/otp", method = RequestMethod.POST)
     public ResponseEntity<?> validateOTP(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getPhoneNumber(), authenticationRequest.getPassword()));
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    authenticationRequest.getPhoneNumber(), authenticationRequest.getPassword()));
+
+            if (!(authentication instanceof AnonymousAuthenticationToken)) {
+                authenticationSuccessHandler.onSuccess(authenticationRequest.getPhoneNumber());
+            }
+
         } catch (BadCredentialsException ex) {
             throw new TokenException("invalid otp");
         }

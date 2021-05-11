@@ -2,8 +2,8 @@ package com.covid19.plasma.service;
 
 import com.covid19.plasma.dao.PlasmaDonorRepoisitory;
 import com.covid19.plasma.dao.entities.PlasmaDonor;
+import com.covid19.plasma.enums.Status;
 import com.covid19.plasma.exception.PlasmaDonorNotFound;
-import com.covid19.plasma.model.RequestStatus;
 import com.covid19.plasma.util.UserAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,19 @@ public class PlasmaDonorService {
     public void registerPlasmaDonor(PlasmaDonor plasmaDonor) {
         userManagementService.save(UserAssembler.getUserEntityFromDonor(plasmaDonor));
 
-        plasmaDonor.setRequestStatus(String.valueOf(RequestStatus.ACTIVE));
+        plasmaDonor.setRequestStatus(Status.ACTIVE);
         repository.save(plasmaDonor);
+    }
+
+    public PlasmaDonor findByPhoneNumber(String phoneNumber) {
+        return repository.findByPhoneNumber(phoneNumber);
+    }
+
+    public Optional<PlasmaDonor> findById(Long id) {
+        return repository.findById(id);
+    }
+
+    public PlasmaDonor save(PlasmaDonor user) {
+        return repository.save(user);
     }
 }
