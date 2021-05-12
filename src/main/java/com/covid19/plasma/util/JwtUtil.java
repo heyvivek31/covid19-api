@@ -1,5 +1,6 @@
 package com.covid19.plasma.util;
 
+import com.covid19.plasma.security.model.AppUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -28,6 +29,7 @@ public class JwtUtil {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
+
     private Claims extractAllClaims(String token) {
         return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
     }
@@ -37,7 +39,9 @@ public class JwtUtil {
     }
 
     public String generateToken(UserDetails userDetails) {
+        AppUser appUser = (AppUser) userDetails;
         Map<String, Object> claims = new HashMap<>();
+        claims.put("userType", appUser.getUserType());
         return createToken(claims, userDetails.getUsername());
     }
 

@@ -2,7 +2,9 @@ package com.covid19.plasma.service;
 
 import com.covid19.plasma.dao.UserRepoisitory;
 import com.covid19.plasma.dao.entities.User;
+import com.covid19.plasma.enums.UserType;
 import com.covid19.plasma.exception.DuplicatePhoneNumberFoundException;
+import com.covid19.plasma.security.model.AppUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
@@ -23,13 +25,20 @@ public class UserManagementService implements UserDetailsService {
     @Autowired
     UserRepoisitory userRepoisitory;
 
+    @Autowired
+    PlasmaDonorService plasmaDonorService;
+
+    @Autowired
+    PlasmaRequestService plasmaRequestService;
+
     @Override
     public UserDetails loadUserByUsername(String phoneNumber) {
         User user = findByPhoneNumber(phoneNumber);
         if (user == null) {
             throw new UsernameNotFoundException(phoneNumber);
         }
-        return new org.springframework.security.core.userdetails.User(user.getPhoneNumber(), user.getOne_time_token(), new ArrayList<>());
+        return new AppUser(user.getPhoneNumber(), user.getOne_time_token(), true, true,
+                true, true, new ArrayList<>(), getUserType(phoneNumber));
     }
 
     public boolean isPhoneNumberExists(String phoneNumber) {
@@ -53,5 +62,22 @@ public class UserManagementService implements UserDetailsService {
             throw new DuplicatePhoneNumberFoundException("Multiple phone number exists");
         }
         return user;
+    }
+
+    private UserType getUserType(String phoneNumber) {
+        if (isDonor(phoneNumber)) {
+            return UserType.PLASMA_DONOR;
+        } else if (isRequestor(phoneNumber)) {
+            return UserType.PLASMA_REQUESTOR;
+        }
+        return UserType.UNKNOWN;
+    }
+
+    private boolean isDonor(String phoneNumber) {
+        return nonNull(plasmaDonorService.findByPhoneNumber(phoneNumber)) ? true : false;
+    }
+
+    private boolean isRequestor(String phoneNumber) {
+        return nonNull(plasmaRequestService.findByPhoneNumber(phoneNumber)) ? true : false;
     }
 }

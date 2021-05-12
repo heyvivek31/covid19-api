@@ -1,5 +1,6 @@
 package com.covid19.plasma.security;
 
+import com.covid19.plasma.filter.JwtRequestFilter;
 import com.covid19.plasma.service.UserManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -8,12 +9,17 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
 public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private UserManagementService userManagementService;
+
+    @Autowired
+    private JwtRequestFilter jwtRequestFilter;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -28,9 +34,22 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests().anyRequest().permitAll();
-/*        http.csrf().disable().authorizeRequests().antMatchers("/authenticate").permitAll()
+        http.csrf().disable().authorizeRequests()
+                .antMatchers("/plasma/*").permitAll()
+                .antMatchers("/generate/otp").permitAll()
+                .antMatchers("/validate/otp").permitAll()
+                .antMatchers("/covid/stats/*").permitAll()
+                .anyRequest().authenticated()
+                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                /*        
+                http.csrf().disable().authorizeRequests().antMatchers("/authenticate").permitAll()
                 .anyRequest().authenticated().and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); 
-        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);*/
+                .and()
+                .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessUrl("/").deleteCookies("JSESSIONID")
+                .invalidateHttpSession(true);
+                
+                */
+        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }
