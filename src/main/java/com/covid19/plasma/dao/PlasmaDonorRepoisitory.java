@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PlasmaDonorRepoisitory extends CrudRepository<PlasmaDonor, Long> {
-    public PlasmaDonor findByPhoneNumber(String phoneNumber);
+    PlasmaDonor findByPhoneNumber(String phoneNumber);
 }

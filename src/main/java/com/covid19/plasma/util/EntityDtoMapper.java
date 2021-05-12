@@ -33,12 +33,16 @@ public class EntityDtoMapper {
 
     @Autowired
     IAuthenticationFacade authenticationFacade;
+    
     @Autowired
     PlasmaRequestService plasmaRequestService;
+    
     @Autowired
     PlasmaDonorService plasmaDonorService;
+    
     @Autowired
     RequestorDonorMapperService requestorDonorMapperService;
+    
     @Autowired
     private ModelMapper modelMapper;
 
@@ -51,7 +55,7 @@ public class EntityDtoMapper {
 
     public PlasmaDonorDto convertToDto(PlasmaDonor plasmaDonor, List<RequestorDonorMapperEntity> requestedDonors) {
         PlasmaDonorDto plasmaDonorDto = modelMapper.map(plasmaDonor, PlasmaDonorDto.class);
-        
+
         plasmaDonorDto.setId(GlobalId.encode(plasmaDonor.getId()));
         plasmaDonorDto.setRegisteredOn(plasmaDonor.getCreatedAt());
         plasmaDonorDto.setPhoneNumber(PlasmaUtil.maskLeavingLast4(plasmaDonor.getPhoneNumber()));
@@ -71,6 +75,7 @@ public class EntityDtoMapper {
         PlasmaRequestDto plasmaRequestDto = modelMapper.map(plasmaRequestor, PlasmaRequestDto.class);
         plasmaRequestDto.setId(GlobalId.encode(plasmaRequestor.getId()));
         plasmaRequestDto.setRequestedOn(plasmaRequestor.getCreatedAt());
+
         //Masking Number for Plasma Requestors
         if (!(authenticationFacade.isAuthenticated() && UserType.PLASMA_DONOR.equals(getPrincipal().getUserType()))) {
             plasmaRequestDto.setPhoneNumber(PlasmaUtil.maskLeavingLast4(plasmaRequestor.getPhoneNumber()));

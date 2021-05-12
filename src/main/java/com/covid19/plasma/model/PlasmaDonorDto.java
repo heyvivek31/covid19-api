@@ -20,7 +20,7 @@ public class PlasmaDonorDto {
     @NotNull
     @Size(min = 10, message = "Phone Number should have atleast 10 characters")
     String phoneNumber;
-    
+
     Date dob;
     int age;
     String email;

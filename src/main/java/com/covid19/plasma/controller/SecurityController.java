@@ -6,7 +6,6 @@ import com.covid19.plasma.exception.TokenException;
 import com.covid19.plasma.model.AuthenticationRequest;
 import com.covid19.plasma.model.AuthenticationResponse;
 import com.covid19.plasma.security.AuthenticationSuccessHandler;
-import com.covid19.plasma.security.facade.IAuthenticationFacade;
 import com.covid19.plasma.service.TokenGenerator;
 import com.covid19.plasma.service.UserManagementService;
 import com.covid19.plasma.util.JwtUtil;
@@ -30,13 +29,13 @@ public class SecurityController {
 
     @Autowired
     AuthenticationSuccessHandler authenticationSuccessHandler;
-    
+
     @Autowired
     private AuthenticationManager authenticationManager;
-    
+
     @Autowired
     private UserManagementService userManagementService;
-    
+
     @Autowired
     private TokenGenerator tokenGenerator;
 
