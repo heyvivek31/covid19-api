@@ -20,7 +20,7 @@ public class TokenGenerator {
 
     public String generateToken(AuthenticationRequest authenticationRequest) throws IOException {
         String token = getToken();
-        otpService.sendSms(authenticationRequest.getPhoneNumber(), "Your OTP is " + token);
+        otpService.sendSms(authenticationRequest.getPhoneNumber(), "Use OTP " + token + " to login to your Raktsetu Account. Do not share it with anyone.");
         updateUserToken(authenticationRequest.getPhoneNumber(), token);
         return token;
     }

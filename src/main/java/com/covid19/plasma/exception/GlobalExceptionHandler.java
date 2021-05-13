@@ -34,13 +34,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity(errorsMap.isEmpty() ? ex : errorsMap, headers, status);
     }
 
-    @ExceptionHandler(value = {PlasmaException.class, TokenException.class})
+    @ExceptionHandler(value = {PlasmaException.class, TokenException.class, TooManyRequestException.class})
     protected ResponseEntity<Object> handleException(
             RuntimeException ex, WebRequest request) {
         HttpStatus httpStatus = HttpStatus.NOT_FOUND;
 
         if (ex instanceof TokenException) {
             httpStatus = HttpStatus.UNAUTHORIZED;
+        } else if (ex instanceof TooManyRequestException) {
+            httpStatus = HttpStatus.TOO_MANY_REQUESTS;
         } else if (ex instanceof DuplicatePhoneNumberFoundException) {
             httpStatus = HttpStatus.CONFLICT;
         }
