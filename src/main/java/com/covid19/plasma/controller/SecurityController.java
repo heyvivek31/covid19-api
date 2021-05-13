@@ -58,13 +58,13 @@ public class SecurityController {
     }*/
 
     @RequestMapping(value = "/generate/otp", method = RequestMethod.POST)
-    public String generateOTP(@RequestBody AuthenticationRequest authenticationRequest) throws PlasmaException, IOException {
+    public  ResponseEntity<?> generateOTP(@RequestBody AuthenticationRequest authenticationRequest) throws PlasmaException, IOException {
         final boolean isUser = userManagementService.isPhoneNumberExists(authenticationRequest.getPhoneNumber());
         if (!isUser) {
             throw new PhoneNumberNotFoundException("phone number not found");
         }
         String token = tokenGenerator.generateToken(authenticationRequest);
-        return token;
+        return ResponseEntity.ok("OK");
     }
 
     @RequestMapping(value = "/validate/otp", method = RequestMethod.POST)
