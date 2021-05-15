@@ -5,6 +5,7 @@ import com.covid19.plasma.dao.entities.PlasmaRequestor;
 import com.covid19.plasma.dao.entities.RequestorDonorMapperEntity;
 import com.covid19.plasma.enums.Status;
 import com.covid19.plasma.enums.UserType;
+import com.covid19.plasma.exception.PhoneNumberAlreadyExistsException;
 import com.covid19.plasma.exception.PlasmaDonorNotFound;
 import com.covid19.plasma.exception.PlasmaRequestorNotFound;
 import com.covid19.plasma.security.facade.IAuthenticationFacade;
@@ -42,6 +43,10 @@ public class PlasmaRequestService {
     }
 
     public void registerPlasmaRequest(PlasmaRequestor plasmaRequestor) {
+        if (repository.existsByPhoneNumber(plasmaRequestor.getPhoneNumber())) {
+            throw new PhoneNumberAlreadyExistsException("This phone number is already registered.");
+        }
+        
         userManagementService.save(UserAssembler.getUserEntityFromRequestor(plasmaRequestor));
 
         plasmaRequestor.setRequestStatus(Status.ACTIVE);

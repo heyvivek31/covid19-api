@@ -13,8 +13,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static java.util.Objects.nonNull;
 
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -31,7 +34,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                         Collectors.mapping(FieldError::getDefaultMessage, Collectors.toSet())
                 )
         );
-        return new ResponseEntity(errorsMap.isEmpty() ? ex : errorsMap, headers, status);
+        Map.Entry<String,Set<String>> entry = errorsMap.entrySet().iterator().next();
+        Set<String> value = nonNull(entry) ? entry.getValue() : null;
+        String errorMessage = nonNull(value) ? (value.stream().findFirst().isPresent() ? 
+                value.stream().findFirst().get() : "") : "";
+        return buildResponseEntity(new ApiError(status.value(), status.name(), errorMessage, ex), status);
+    }
+
+    @ExceptionHandler({PhoneNumberNotFoundException.class})
+    protected ResponseEntity<Object> handlePhoneNumberNotFoundException(PhoneNumberNotFoundException ex){
+        HttpStatus httpStatus = HttpStatus.NOT_FOUND;
+        return buildResponseEntity(new ApiError(httpStatus.value(), httpStatus.name(), ex.getMessage(), ex), httpStatus);
     }
 
     @ExceptionHandler(value = {PlasmaException.class, TokenException.class, TooManyRequestException.class})
@@ -43,13 +56,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             httpStatus = HttpStatus.UNAUTHORIZED;
         } else if (ex instanceof TooManyRequestException) {
             httpStatus = HttpStatus.TOO_MANY_REQUESTS;
-        } else if (ex instanceof DuplicatePhoneNumberFoundException) {
+        } else if (ex instanceof PhoneNumberAlreadyExistsException) {
             httpStatus = HttpStatus.CONFLICT;
         }
-        return buildResponseEntity(new ApiError(httpStatus, ex.getMessage(), ex));
+        return buildResponseEntity(new ApiError(httpStatus.value(), httpStatus.toString(), ex.getMessage(), ex), httpStatus);
     }
-
-    private ResponseEntity<Object> buildResponseEntity(ApiError apiError) {
-        return new ResponseEntity<>(apiError, apiError.getStatus());
+    
+    private ResponseEntity<Object> buildResponseEntity(ApiError apiError, HttpStatus httpStatus) {
+        return new ResponseEntity<>(apiError, httpStatus);
     }
 }

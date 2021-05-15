@@ -3,7 +3,7 @@ package com.covid19.plasma.service;
 import com.covid19.plasma.dao.UserRepoisitory;
 import com.covid19.plasma.dao.entities.User;
 import com.covid19.plasma.enums.UserType;
-import com.covid19.plasma.exception.DuplicatePhoneNumberFoundException;
+import com.covid19.plasma.exception.PhoneNumberAlreadyExistsException;
 import com.covid19.plasma.security.model.AppUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -59,7 +59,7 @@ public class UserManagementService implements UserDetailsService {
         try {
             user = userRepoisitory.findByPhoneNumber(phoneNumber);
         } catch (IncorrectResultSizeDataAccessException e) {
-            throw new DuplicatePhoneNumberFoundException("Multiple phone number exists");
+            throw new PhoneNumberAlreadyExistsException("Multiple phone number exists");
         }
         return user;
     }

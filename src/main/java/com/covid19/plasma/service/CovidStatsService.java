@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -25,6 +26,7 @@ public class CovidStatsService {
         return client.doGetRequest(statewiseEndpoint);
     }
 
+    @Cacheable(value = "totalCasesCache")
     public JsonNode getTotalStats() throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         String json = client.doGetRequest(statewiseEndpoint);

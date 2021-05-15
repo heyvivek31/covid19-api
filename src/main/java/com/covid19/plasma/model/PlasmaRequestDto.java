@@ -1,10 +1,14 @@
 package com.covid19.plasma.model;
 
 import lombok.Data;
+import org.apache.tomcat.jni.Local;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -14,19 +18,21 @@ public class PlasmaRequestDto {
 
     String id;
 
+    @NotEmpty
     String firstName;
 
     String lastName;
 
     String gender;
 
-    @NotNull
+    @NotEmpty
     @Size(min = 10, message = "Phone Number should have atleast 10 characters")
     String phoneNumber;
 
-    Date dob;
+    LocalDate dob;
     int age;
 
+    @Email(message = "Email should be valid")
     String email;
 
     @NotNull
@@ -39,9 +45,9 @@ public class PlasmaRequestDto {
     Date covidPostive;
 
     Date covidNegative;
-
+    @NotEmpty
     String city;
-
+    @NotEmpty
     String state;
 
     boolean isPhoneNumberVerified;

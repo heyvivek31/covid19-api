@@ -3,6 +3,9 @@ package com.covid19.plasma.util;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.time.*;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,5 +24,10 @@ public class PlasmaUtil {
         Pattern pattern = Pattern.compile("^\\d{10}$");
         Matcher matcher = pattern.matcher(phoneNumber);
         return matcher.matches();
+    }
+    
+    public static int getAge(LocalDate date)  {
+        Period period = Period.between(date, LocalDate.now());
+        return period.getYears();
     }
 }

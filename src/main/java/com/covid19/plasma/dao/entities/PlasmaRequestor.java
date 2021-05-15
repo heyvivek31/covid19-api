@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -17,9 +18,9 @@ public class PlasmaRequestor {
     String firstName;
     String lastName;
     String gender;
-    @Column(name = "phone_number", nullable = false)
+    @Column(name = "phone_number", nullable = false, unique = true)
     String phoneNumber;
-    Date dob;
+    LocalDate dob;
     Integer age;
     String email;
     String bloodGroup;

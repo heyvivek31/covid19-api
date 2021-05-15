@@ -50,6 +50,7 @@ public class EntityDtoMapper {
         PlasmaDonor plasmaDonor = modelMapper.map(plasmaDonorDto, PlasmaDonor.class);
         plasmaDonor.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         plasmaDonor.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+        plasmaDonor.setAge(PlasmaUtil.getAge(plasmaDonorDto.getDob()));
         return plasmaDonor;
     }
 
@@ -68,6 +69,7 @@ public class EntityDtoMapper {
         PlasmaRequestor plasmaRequestor = modelMapper.map(plasmaRequestDto, PlasmaRequestor.class);
         plasmaRequestor.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         plasmaRequestor.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+        plasmaRequestor.setAge(PlasmaUtil.getAge(plasmaRequestDto.getDob()));
         return plasmaRequestor;
     }
 
