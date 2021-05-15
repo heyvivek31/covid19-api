@@ -5,6 +5,7 @@ import com.covid19.plasma.dao.entities.PlasmaRequestor;
 import com.covid19.plasma.dao.entities.User;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 
 public class UserAssembler {
 
@@ -35,6 +36,7 @@ public class UserAssembler {
         user.setActive(true);
         user.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         user.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+        user.setDob(plasmaRequestor.getDob());
         return user;
     }
 }

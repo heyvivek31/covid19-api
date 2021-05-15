@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -19,7 +20,7 @@ public class User {
     String phoneNumber;
     String email;
     String gender;
-    Date dob;
+    LocalDate dob;
     String city;
     String state;
     @Column(name = "created_at")

@@ -3,6 +3,7 @@ package com.covid19.plasma.service;
 import com.covid19.plasma.dao.PlasmaDonorRepoisitory;
 import com.covid19.plasma.dao.entities.PlasmaDonor;
 import com.covid19.plasma.enums.Status;
+import com.covid19.plasma.exception.PhoneNumberAlreadyExistsException;
 import com.covid19.plasma.exception.PlasmaDonorNotFound;
 import com.covid19.plasma.util.UserAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,10 @@ public class PlasmaDonorService {
     }
 
     public void registerPlasmaDonor(PlasmaDonor plasmaDonor) {
+        if (repository.existsByPhoneNumber(plasmaDonor.getPhoneNumber())) {
+            throw new PhoneNumberAlreadyExistsException("This phone number is already registered.");
+        }
+                
         userManagementService.save(UserAssembler.getUserEntityFromDonor(plasmaDonor));
 
         plasmaDonor.setRequestStatus(Status.ACTIVE);
