@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -18,7 +19,7 @@ public class PlasmaDonor<List> {
     String gender;
     @Column(name = "phone_number", nullable = false, unique = true)
     String phoneNumber;
-    Date dob;
+    LocalDate dob;
     Integer age;
     String email;
     String bloodGroup;

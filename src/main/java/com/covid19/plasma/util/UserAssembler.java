@@ -21,6 +21,7 @@ public class UserAssembler {
         user.setActive(true);
         user.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         user.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+        user.setDob(plasmaDonor.getDob());
         return user;
     }
 
