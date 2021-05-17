@@ -37,7 +37,7 @@ public class AuthenticationSuccessHandler {
         }
 
         PlasmaDonor plasmaDonor = plasmaDonorService.findByPhoneNumber(phoneNumber);
-        if (nonNull(plasmaDonor) && !plasmaDonor.getIsPhoneNumberVerified()) {
+        if (nonNull(plasmaDonor) && isNull(plasmaDonor.getIsPhoneNumberVerified())) {
             plasmaDonor.setIsPhoneNumberVerified(true);
             plasmaDonorService.save(plasmaDonor);
         }
